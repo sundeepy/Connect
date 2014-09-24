@@ -38,3 +38,4 @@ Optional:
 Have a History, where we store all the previous activities (successfully completed ones) and have an option to share via Twitter, Facebook
 Have a way to login via Phone number and authenticate using the code
 
+![Video Walkthrough](wireframes/login_screen.png)
