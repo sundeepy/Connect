@@ -39,3 +39,5 @@ Have a History, where we store all the previous activities (successfully complet
 Have a way to login via Phone number and authenticate using the code
 
 ![Video Walkthrough](wireframes/login_screen.png)
+![Video Walkthrough](wireframes/dashboard.png)
+![Video Walkthrough](wireframes/notification.png)
