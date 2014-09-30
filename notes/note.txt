@@ -1,0 +1,16 @@
+# Schema
+
+1. User Schema
+	1. userid
+	2. password
+	3. Circle of Friends
+2. ConnectActivity:
+	1. Time of tap
+	2. Location of the tap
+	3. User of the tap
+	4. Notification Schema
+		1. Device ID
+		2. User ID
+
+3. Ride Special Case :
+	1. Have a separate screen after ride activity to get users from and to location
