@@ -7,7 +7,7 @@
     <ScrollView
         android:id="@+id/signup_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent" android:background="@drawable/bg_connect">
 
         <LinearLayout
             style="@style/LoginFormContainer"
@@ -51,7 +51,8 @@
                 android:layout_marginTop="16dp"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
-                android:text="@string/signup" />
+                android:text="@string/signup" 
+                android:textColor="#FFFFFF"/>
         </LinearLayout>
     </ScrollView>
 

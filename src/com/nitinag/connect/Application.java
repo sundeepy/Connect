@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.nitinag.connect.model.AnywallPost;
+import com.nitinag.connect.model.CoffeeActivity;
+import com.nitinag.connect.model.ConnectActivity;
+import com.nitinag.connect.model.DinnerActivity;
+import com.nitinag.connect.model.LunchActivity;
+import com.nitinag.connect.model.RideActivity;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -33,11 +38,22 @@ private static final String PARSE_CLIENT_KEY = "ED4eq5TDpyOVQjBWJQ6SX2t6pxA2lH4W
   public Application() {
   }
 
+  private void registerModels(){
+	  ParseObject.registerSubclass(AnywallPost.class);
+	  ParseObject.registerSubclass(ConnectActivity.class);
+	  ParseObject.registerSubclass(CoffeeActivity.class);
+	  ParseObject.registerSubclass(LunchActivity.class);
+	  ParseObject.registerSubclass(RideActivity.class);
+	  ParseObject.registerSubclass(DinnerActivity.class);
+	  
+  }
+  
   @Override
   public void onCreate() {
     super.onCreate();
 
-    ParseObject.registerSubclass(AnywallPost.class);
+    registerModels();
+    
     Parse.initialize(this, PARSE_APPLICATION_ID,
         PARSE_CLIENT_KEY);
 
