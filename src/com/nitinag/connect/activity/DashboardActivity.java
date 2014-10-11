@@ -1,0 +1,70 @@
+package com.nitinag.connect.activity;
+
+
+
+import com.nitinag.connect.utils.FragmentTabListener;
+
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+
+public class DashboardActivity extends FragmentActivity{
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_dashboard);
+		setupTabs();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.dashboard, menu);
+		return true;
+	}
+	
+	private void setupTabs() {
+		ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(true);
+
+		Tab tab1 = actionBar
+			.newTab()
+			.setText("Friend Activities")
+			.setIcon(R.drawable.ic_connect)
+			.setTag("Friend Activities")
+			.setTabListener(
+				new FragmentTabListener<ActivitiesFragment>(R.id.flContainer, this, "FriendActivitiesView",
+						ActivitiesFragment.class));
+
+		actionBar.addTab(tab1);
+		actionBar.selectTab(tab1);
+
+		Tab tab2 = actionBar
+			.newTab()
+			.setText("My Activities")
+			.setIcon(R.drawable.ic_connect)
+			.setTag("My Activities")
+			.setTabListener(
+			    new FragmentTabListener<ActivitiesFragment>(R.id.flContainer, this, "MyActivitiesView",
+			    		ActivitiesFragment.class));
+
+		actionBar.addTab(tab2);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+}

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.nitinag.connect.model.AnywallPost;
+import com.nitinag.connect.model.Assoc;
 import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
 import com.nitinag.connect.model.DinnerActivity;
@@ -45,6 +46,7 @@ private static final String PARSE_CLIENT_KEY = "ED4eq5TDpyOVQjBWJQ6SX2t6pxA2lH4W
 	  ParseObject.registerSubclass(LunchActivity.class);
 	  ParseObject.registerSubclass(RideActivity.class);
 	  ParseObject.registerSubclass(DinnerActivity.class);
+	  ParseObject.registerSubclass(Assoc.class);
 	  
   }
   

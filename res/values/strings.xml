@@ -23,5 +23,15 @@
     <string name="btlunch">Lunch</string>
     <string name="btRide">Ride</string>
     <string name="btDinner">Dinner</string>
+    <string name="title_activity_activities">ActivitiesActivity</string>
+    <string name="profile_image">TODO</string>
+    <string name="user_name">TODO</string>
+    <string name="activity_body">TODO</string>
+    <string name="created_at">TODO</string>
+    <string name="ptr_pull_to_refresh">Pull to refresh</string>
+    <string name="ptr_release_to_refresh">Release to refresh</string>
+    <string name="ptr_refreshing">Refreshing…</string>
+    <string name="ptr_last_updated">Updated: %1$s</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
 
 </resources>

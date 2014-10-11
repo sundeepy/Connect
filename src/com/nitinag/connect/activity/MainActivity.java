@@ -1,11 +1,13 @@
 package com.nitinag.connect.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
+
 
 import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
@@ -18,6 +20,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 public class MainActivity extends Activity {
+	
+	private static final String TAG = "MainActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +40,22 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	private boolean createNew(ConnectActivity connectActivity){
+		return false;
+	}
+	
+	
 	public void onClick(View v){
 		switch (v.getId()) {
 		case R.id.btCoffee:
-			addActivity(new CoffeeActivity());
+			ConnectActivity newActivity = new CoffeeActivity();
+			if(createNew(newActivity))
+				addActivity(newActivity);
+			else{
+				Intent i = new Intent(this, DashboardActivity.class);
+				startActivity(i);
+			}
+			
 			break;
 		case R.id.btLunch:
 			addActivity(new LunchActivity());
@@ -63,12 +79,14 @@ public class MainActivity extends Activity {
 			@Override
 			public void done(ParseException e) {
 				if(e != null)
-					Log.e("TEST", e.toString(), e);
-				else
+					Log.e(TAG, e.toString(), e);
+				else {
 					Toast.makeText(MainActivity.this, "A " + connectActivity.getType() + " actvity got created" , Toast.LENGTH_SHORT).show();
+				}
 			}
 		};
-		ActivityUtil.addActivity(connectActivity, callback);
+		
+		ActivityUtil.saveActivity(ParseUser.getCurrentUser(), connectActivity, callback);
 	}
 	
 }

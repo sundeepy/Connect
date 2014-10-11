@@ -6,10 +6,6 @@ import com.parse.ParseObject;
 @ParseClassName("Assoc")
 public class Assoc extends ParseObject{
 
-	private String userId;
-	private String activityId;
-	private String friendId;
-	
 	/**
 	 * @param args
 	 */
@@ -19,27 +15,35 @@ public class Assoc extends ParseObject{
 	}
 
 	public String getUserId() {
-		return userId;
+		return getString("userId");
 	}
 
 	public void setUserId(String userId) {
-		this.userId = userId;
+		put("userId", userId);
 	}
 
 	public String getActivityId() {
-		return activityId;
+		return getString("activityId");
 	}
 
 	public void setActivityId(String activityId) {
-		this.activityId = activityId;
+		put("activityId", activityId);
 	}
 
 	public String getFriendId() {
-		return friendId;
+		return getString("friendId");
 	}
 
 	public void setFriendId(String friendId) {
-		this.friendId = friendId;
+		put("friendId", friendId);
+	}
+
+	public String getActivityType() {
+		return getString("activityType");
+	}
+
+	public void setActivityType(String activityType) {
+		put("activityType", activityType);
 	}
 
 }
