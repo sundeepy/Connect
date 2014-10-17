@@ -5,6 +5,7 @@ import android.util.Log;
 import com.nitinag.connect.model.AnywallPost;
 import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
+import com.nitinag.connect.model.ConnectUser;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -35,18 +36,17 @@ public class ActivityUtilsTest extends android.app.Application{
 		  
 	  }
 	
-	public void addCoffeeActivity(){
+	public void addCoffeeActivity(ConnectUser user){
 
 		CoffeeActivity coffee = new CoffeeActivity();
-		coffee.setUserId(ParseUser.getCurrentUser().getObjectId());
+		coffee.setUser(user);
 		
 		
 		SaveCallback callback = new SaveCallback() {
 			
 			@Override
 			public void done(ParseException e) {
-				System.out.println(e);
-				Log.e("TEST", e.toString(), e);
+				Log.e("ActivityUtils", e.toString(), e);
 				
 			}
 		};
@@ -55,8 +55,6 @@ public class ActivityUtilsTest extends android.app.Application{
 	
 	public static void main(String[] args) {
 		
-			ActivityUtilsTest test = new ActivityUtilsTest();
-			test.addCoffeeActivity();
 	}
 
 }

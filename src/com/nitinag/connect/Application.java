@@ -7,6 +7,7 @@ import com.nitinag.connect.model.AnywallPost;
 import com.nitinag.connect.model.Assoc;
 import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
+import com.nitinag.connect.model.ConnectUser;
 import com.nitinag.connect.model.DinnerActivity;
 import com.nitinag.connect.model.LunchActivity;
 import com.nitinag.connect.model.RideActivity;
@@ -40,6 +41,7 @@ private static final String PARSE_CLIENT_KEY = "ED4eq5TDpyOVQjBWJQ6SX2t6pxA2lH4W
   }
 
   private void registerModels(){
+	  ParseObject.registerSubclass(ConnectUser.class);
 	  ParseObject.registerSubclass(AnywallPost.class);
 	  ParseObject.registerSubclass(ConnectActivity.class);
 	  ParseObject.registerSubclass(CoffeeActivity.class);

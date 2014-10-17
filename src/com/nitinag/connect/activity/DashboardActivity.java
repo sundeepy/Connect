@@ -2,6 +2,7 @@ package com.nitinag.connect.activity;
 
 
 
+import com.nitinag.connect.utils.Constants;
 import com.nitinag.connect.utils.FragmentTabListener;
 
 import android.app.ActionBar;
@@ -32,6 +33,9 @@ public class DashboardActivity extends FragmentActivity{
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
 
+		Bundle b1 = new Bundle();
+		b1.putBoolean("self", false);
+		b1.putString("activityType", Constants.COFFEE);
 		Tab tab1 = actionBar
 			.newTab()
 			.setText("Friend Activities")
@@ -39,11 +43,14 @@ public class DashboardActivity extends FragmentActivity{
 			.setTag("Friend Activities")
 			.setTabListener(
 				new FragmentTabListener<ActivitiesFragment>(R.id.flContainer, this, "FriendActivitiesView",
-						ActivitiesFragment.class));
+						ActivitiesFragment.class, b1));
 
 		actionBar.addTab(tab1);
 		actionBar.selectTab(tab1);
-
+		
+		Bundle b2 = new Bundle();
+		b2.putBoolean("self", true);
+		b2.putString("activityType", Constants.COFFEE);
 		Tab tab2 = actionBar
 			.newTab()
 			.setText("My Activities")
@@ -51,7 +58,7 @@ public class DashboardActivity extends FragmentActivity{
 			.setTag("My Activities")
 			.setTabListener(
 			    new FragmentTabListener<ActivitiesFragment>(R.id.flContainer, this, "MyActivitiesView",
-			    		ActivitiesFragment.class));
+			    		ActivitiesFragment.class, b2));
 
 		actionBar.addTab(tab2);
 	}

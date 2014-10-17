@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nitinag.connect.model.ConnectUser;
+import com.nitinag.connect.utils.ActivityUtil;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -98,19 +100,27 @@ public class SignUpActivity extends Activity {
     dialog.show();
 
     // Set up a new Parse user
-    ParseUser user = new ParseUser();
+    final ParseUser user = new ParseUser();
     user.setUsername(username);
     user.setPassword(password);
+    
+    
 
     // Call the Parse signup method
     user.signUpInBackground(new SignUpCallback() {
       @Override
       public void done(ParseException e) {
-        dialog.dismiss();
+    	dialog.dismiss();
         if (e != null) {
           // Show the error message
           Toast.makeText(SignUpActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
         } else {
+          //Create a corresponding connect user as well
+          ConnectUser connectUser = new ConnectUser();
+          connectUser.setUserId(user.getObjectId());
+          connectUser.saveInBackground();
+            
+        	
           // Start an intent for the dispatch activity
           Intent intent = new Intent(SignUpActivity.this, DispatchActivity.class);
           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

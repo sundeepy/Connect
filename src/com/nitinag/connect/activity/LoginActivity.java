@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -12,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nitinag.connect.model.ConnectUser;
+import com.nitinag.connect.utils.ActivityUtil;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -89,6 +92,14 @@ public class LoginActivity extends Activity {
     ParseUser.logInInBackground(username, password, new LogInCallback() {
       @Override
       public void done(ParseUser user, ParseException e) {
+    	//Create mock user
+    	  
+      	try {
+			ActivityUtil.addMockFriends();
+		} catch (ParseException pe) {
+			Log.e("LoginActivity", "Unable to create mock users", pe);
+		}
+		
         dialog.dismiss();
         if (e != null) {
           // Show the error message

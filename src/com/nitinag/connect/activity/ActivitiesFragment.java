@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 
+import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
 import com.nitinag.connect.utils.ActivityArrayAdapter;
 import com.nitinag.connect.utils.ActivityUtil;
@@ -30,7 +31,8 @@ public class ActivitiesFragment extends Fragment {
 	private ArrayList<ConnectActivity> activities;
 	protected ArrayAdapter<ConnectActivity> aActivities;
 	protected PullToRefreshListView lvActivities;
-	private String activityType = "Coffee";
+	private String activityType;
+	private boolean self;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,9 @@ public class ActivitiesFragment extends Fragment {
 		
 		activities = new ArrayList<ConnectActivity>();
 		aActivities = new ActivityArrayAdapter(getActivity(), activities);
+		Bundle args = getArguments();
+		self = args.getBoolean("self");
+		activityType = args.getString("activityType");
 	}
 
 	
@@ -55,7 +60,11 @@ public class ActivitiesFragment extends Fragment {
                 // Make sure you call listView.onRefreshComplete() when
                 // once the network request has completed successfully.
             	aActivities.clear();
-            	populateActivities();
+            	try {
+					populateActivities();
+				} catch (ParseException e) {
+					Log.e(TAG, "Unable to populate activities", e);
+				}
             	
             }
         });
@@ -84,19 +93,24 @@ public class ActivitiesFragment extends Fragment {
 		});
 		
 		
-		populateActivities();
+		try {
+			aActivities.clear();
+			populateActivities();
+		} catch (ParseException e) {
+			Log.e(TAG, "Unable to populate activities", e);
+		}
 		return v;
 	}
 
-	private void populateActivities() {
-		ActivityUtil.getActivityList(ParseUser.getCurrentUser(), new FindCallback<ParseObject>() {
+	private void populateActivities() throws ParseException {
+		ActivityUtil.getActivityList(ActivityUtil.getCurrentUser(), new FindCallback<ConnectActivity>() {
 			
 			@Override
-			public void done(List<ParseObject> activities, ParseException pe) {
+			public void done(List<ConnectActivity> as, ParseException pe) {
 				if(pe == null){
 					Log.d(TAG, "Number of activities retrieved " + activities.size());
-					for (ParseObject activity : activities) {
-						activities.add(activity);
+					for (ParseObject a : as) {
+						activities.add((ConnectActivity) a);
 					}
 					aActivities.notifyDataSetChanged();
 					lvActivities.onRefreshComplete();
@@ -105,7 +119,7 @@ public class ActivitiesFragment extends Fragment {
 					Log.e(TAG, "Unable to retrieve friend activity list", pe);
 				}
 			}
-		}, activityType);
+		}, self, activityType);
 	}
 	
 

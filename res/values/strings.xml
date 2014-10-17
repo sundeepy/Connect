@@ -33,5 +33,5 @@
     <string name="ptr_refreshing">Refreshing…</string>
     <string name="ptr_last_updated">Updated: %1$s</string>
     <string name="title_activity_dashboard">DashboardActivity</string>
-
+	<string name="action_signout">Sign Out</string>
 </resources>

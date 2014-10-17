@@ -12,7 +12,10 @@ import android.widget.TextView;
 
 import com.nitinag.connect.activity.R;
 import com.nitinag.connect.model.ConnectActivity;
+import com.nitinag.connect.model.ConnectUser;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 
 public class ActivityArrayAdapter extends ArrayAdapter<ConnectActivity> {
 
@@ -22,7 +25,7 @@ public class ActivityArrayAdapter extends ArrayAdapter<ConnectActivity> {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ConnectActivity tweet = getItem(position);
+		final ConnectActivity connectActivity = getItem(position);
 		View v;
 		if(convertView == null){
 			LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -33,18 +36,33 @@ public class ActivityArrayAdapter extends ArrayAdapter<ConnectActivity> {
 		}
 		
 		ImageView ivProfileImage = (ImageView) v.findViewById(R.id.ivProfileImage);
-		TextView tvUserName = (TextView) v.findViewById(R.id.tvUserName);
-		TextView tvActivityBody = (TextView) v.findViewById(R.id.tvActivityBody);
-		TextView created_at = (TextView) v.findViewById(R.id.created_at);
+		final TextView tvUserName = (TextView) v.findViewById(R.id.tvUserName);
+		final TextView tvActivityBody = (TextView) v.findViewById(R.id.tvActivityBody);
+		final TextView createdAt = (TextView) v.findViewById(R.id.created_at);
 		ivProfileImage.setImageResource(android.R.color.transparent);
-		ImageLoader imageLoader = ImageLoader.getInstance();
-		/* Will set these items appropriately
-		imageLoader.displayImage(tweet.getUser().getProfileImageUrl(), ivProfileImage);
-		tvUserName.setText(tweet.getUser().getName());
-		tvActivityBody.setText(tweet.getBody());
-		created_at.setText(tweet.getRelativeTimeAgo());
-		tvTwitterHandle.setText("@" + tweet.getUser().getScreenName());
-		*/
+		
+		final ConnectUser createdBy = connectActivity.getUser();
+		createdBy.fetchInBackground(new GetCallback<ConnectUser>() {
+
+			@Override
+			public void done(ConnectUser  user, ParseException arg1) {
+				tvUserName.setText(user.getUserId());
+				
+				//ImageLoader imageLoader = ImageLoader.getInstance();
+				/* Will set these items appropriately
+				//imageLoader.displayImage(tweet.getUser().getProfileImageUrl(), ivProfileImage);
+				*/
+				
+				
+				tvActivityBody.setText(connectActivity.getType());
+				createdAt.setText(connectActivity.getRelativeTimeAgo());
+				
+			}
+			
+		
+		});
+		
+		
 		return v;
 	}
 

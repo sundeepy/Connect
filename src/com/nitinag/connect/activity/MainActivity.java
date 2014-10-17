@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
+import com.nitinag.connect.model.ConnectUser;
 import com.nitinag.connect.model.DinnerActivity;
 import com.nitinag.connect.model.LunchActivity;
 import com.nitinag.connect.model.RideActivity;
@@ -35,21 +36,34 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		//ActivityUtil.addMockFriends();
 		
-		ActivityUtil.getFriends(null);
-		
 		return true;
 	}
 
-	private boolean createNew(ConnectActivity connectActivity){
+	private boolean createNew(ConnectUser user){
+		
+		try {
+			return ActivityUtil.activityExists(user);
+		} catch (ParseException e) {
+			Log.e(TAG, "Error checking if activity type exists", e);
+		}
 		return false;
 	}
 	
 	
 	public void onClick(View v){
+		ConnectUser me = null;
+		try {
+			me = ActivityUtil.getCurrentUser();
+		} catch (ParseException e) {
+			Log.e(TAG, "Unable to get connectuser for the parse user", e);
+			return;
+		}
+		
+		
 		switch (v.getId()) {
 		case R.id.btCoffee:
 			ConnectActivity newActivity = new CoffeeActivity();
-			if(createNew(newActivity))
+			if(createNew(me))
 				addActivity(newActivity);
 			else{
 				Intent i = new Intent(this, DashboardActivity.class);
@@ -71,22 +85,28 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private void addActivity(final ConnectActivity connectActivity) {
-		connectActivity.setUserId(ParseUser.getCurrentUser().getObjectId());
-		
-		SaveCallback callback = new SaveCallback() {
+	private void addActivity(final ConnectActivity connectActivity)  {
+		try{
+			ConnectUser me = ActivityUtil.getCurrentUser();	
+			connectActivity.setUser(me);
 			
-			@Override
-			public void done(ParseException e) {
-				if(e != null)
-					Log.e(TAG, e.toString(), e);
-				else {
-					Toast.makeText(MainActivity.this, "A " + connectActivity.getType() + " actvity got created" , Toast.LENGTH_SHORT).show();
+			SaveCallback callback = new SaveCallback() {
+				
+				@Override
+				public void done(ParseException e) {
+					if(e != null)
+						Log.e(TAG, e.toString(), e);
+					else {
+						Toast.makeText(MainActivity.this, "A " + connectActivity.getType() + " actvity got created" , Toast.LENGTH_SHORT).show();
+					}
 				}
-			}
-		};
-		
-		ActivityUtil.saveActivity(ParseUser.getCurrentUser(), connectActivity, callback);
+			};
+			
+			ActivityUtil.saveActivity(ActivityUtil.getCurrentUser(), connectActivity, callback);
+	
+		}catch(ParseException e){
+			
+		}
 	}
 	
 }

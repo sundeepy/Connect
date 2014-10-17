@@ -1,13 +1,16 @@
 package com.nitinag.connect.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.util.Log;
 
 import com.nitinag.connect.model.Assoc;
 import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
+import com.nitinag.connect.model.ConnectUser;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -20,18 +23,52 @@ import com.parse.SaveCallback;
 public class ActivityUtil { 
 	
 	private static final String TAG = "ActivityUtil";
-
+	private static ConnectUser currUser = null;
+	private static final Map<String, ConnectActivity> activityMap = new HashMap<String, ConnectActivity>();
+	
+	
 	public final static void addActivity(ConnectActivity c, SaveCallback callback){
 		c.saveInBackground(callback);
 	}
 	
 	
-	public final static void addMockFriends(){
-
+	public final static ConnectUser getCurrentUser() throws ParseException{
+		if (currUser == null){
+			ParseUser me = ParseUser.getCurrentUser();
+			if(me != null){
+				ParseQuery<ConnectUser> query = ParseQuery.getQuery(ConnectUser.class);
+				query.whereEqualTo("userId", me.getObjectId());
+				List<ConnectUser> result = query.find();
+				if(result.size() == 1){
+					currUser = result.get(0);
+				}
+			}
+		}
+		
+		return currUser;
+	}
+	
+	public final static void addMockFriends() throws ParseException{
+		ConnectUser me = getCurrentUser();
+		SaveCallback callback = new SaveCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				if(e == null){
+					Log.d(TAG, "User created successfully");
+				}
+				else {
+					Log.e(TAG, "Error creating other individual user", e);
+				}
+				
+			}
+		};
+		
 		List<ParseUser> friends = new ArrayList<ParseUser>();
 		ParseUser nitin = new ParseUser();
 		nitin.setUsername("nitin");
 		nitin.setPassword("password");
+		
 		
 		
 		
@@ -61,10 +98,39 @@ public class ActivityUtil {
 			
 			for (ParseUser parseUser : friends) {
 				parseUser.signUp();
+				ConnectUser newUser = new ConnectUser();
+				newUser.setUserId(parseUser.getObjectId());
+				newUser.save();
+				newUser.addFriend(me, new SaveCallback() {
+					
+					@Override
+					public void done(ParseException e) {
+						if(e != null)
+							Log.e(TAG, "Error saving relations with me", e);
+						
+					}
+				});
+				
+				me.addFriend(newUser, new SaveCallback() {
+
+					@Override
+					public void done(ParseException e) {
+						if(e == null){
+							Log.d(TAG, "User created successfully");
+						}
+						else {
+							Log.e(TAG, "Error creating user", e);
+						}
+						
+					}
+					
+					
+				});
 			}
 			
-			ParseUser.saveAll(friends);
-			addFriends(friends);
+			//ParseUser.saveAll(friends);
+			
+			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -72,155 +138,59 @@ public class ActivityUtil {
 		
 	}
 	
-	public final static void addFriends(List<ParseUser> friends){
-		ParseUser user = ParseUser.getCurrentUser();
-		ParseRelation<ParseObject> relation = user.getRelation("friends");
-		for (ParseUser friend : friends) {
-			relation.add(friend);
-		}
-		SaveCallback callback = new SaveCallback() {
+	
+	public final static void getFriends(ConnectUser user, FindCallback<ParseObject> callback){
+		user.getFriends(callback);
+	}
+	
+	
+	public final static boolean activityExists(final ConnectUser user) throws ParseException{
+		ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("CoffeeActivity");
+		userQuery.whereEqualTo("user", user);
+		List<ParseObject> aList = userQuery.find();
+		if(aList.size() > 0)
+			return false;
+		else
+			return true;
+	}
+	
+	public final static void saveActivity(final ConnectUser user, final ConnectActivity activity, final SaveCallback callback){
+		getFriends(user, new FindCallback<ParseObject>() {
 			
 			@Override
-			public void done(ParseException e) {
-				 if (e != null) {
-				        Log.e("Update Friends List", e.toString(), e);
-				      } else {
-				        Log.d("Update Friends List", "Successfully Updated");
-				 }
+			public void done(List<ParseObject> fs, ParseException e) {
+				List<ConnectUser> friends = new ArrayList<ConnectUser>();
+				if(e == null){
+					Log.d(TAG, "Got friends list size " + fs.size());
+					System.err.println("Got friends list size " + fs.size());
+					for (ParseObject f : fs) {
+						friends.add((ConnectUser) f);
+					}
+					activity.setFor(friends, callback);
+					
+				}else{
+					Log.e(TAG, "Error fetching friends list", e);
+				}
 				
 			}
-		};
-		user.saveInBackground(callback );
-	}
-	
-	public final static void getFriends(FindCallback<ParseObject> callback){
-		ParseUser user = ParseUser.getCurrentUser();
-		ParseRelation<ParseObject> relation = user.getRelation("friends");
-		if(callback == null) {
-			relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
-			    public void done(List<ParseObject> friends, ParseException e) {
-			      if (e != null) {
-			        Log.e("Friends List", e.toString(), e);
-			      } else {
-			        Log.d("Friends List", "Number of friends " + friends.size());
-			      }
-			    }
-			});
-		}
-		else relation.getQuery().findInBackground(callback);
-	}
-	
-	
-	public final static void saveAssoc(String userId, List<String> friendIds, String activityId, String activityType, SaveCallback callback) throws ParseException{
-		List<Assoc> newAssocs = new ArrayList<Assoc>();
-		for (String friendId : friendIds) {
-			Assoc newAssoc = new Assoc();
-			newAssoc.setUserId(userId);
-			newAssoc.setFriendId(friendId);
-			newAssoc.setActivityId(activityId);
-			newAssoc.setActivityType(activityType);
-			newAssocs.add(newAssoc);
-		}
-		ParseObject.saveAllInBackground(newAssocs, callback);
-	}
-	
-	
-	public final static void saveActivity(final ParseUser user, final ConnectActivity activity, final SaveCallback callback){
-		
-		SaveCallback activitySaveCallback = new SaveCallback() {
 			
-			@Override
-			public void done(ParseException pe) {
-				if(pe == null){
-					final String userId = user.getObjectId();
-					final String activityId = activity.getObjectId();
-					final List<String> friendIds = new ArrayList<String>();
-					FindCallback<ParseObject> friendCallback = new FindCallback<ParseObject>() {
-						
-						@Override
-						public void done(List<ParseObject> friends, ParseException e) {
-							if(e != null){
-								Log.e("Unable to retrieve Friends List", e.toString(), e);
-							}
-							else{
-								for (ParseObject friend : friends) {
-									friendIds.add(friend.getObjectId());
-								}
-								try {
-									saveAssoc(userId, friendIds, activityId, activity.getType(), null);
-								} catch (ParseException pe) {
-									Log.d(TAG, "Unable to save association of users and activity", pe);
-								}
-								callback.done(e);
-								
-							}
-							
-						}
-					};
-				
-					getFriends(friendCallback);
-			    }
-				else {
-					Log.e(TAG, "Error saving activity", pe);
-				}
-		}
-	};
-		
-		addActivity(activity, activitySaveCallback);
-		
+		});
 		
 	}
 	
 	
 	
-	
-	public final static void getActivityList(List<Assoc> assocs, FindCallback<ParseObject> callback, String activityType){
-		ParseQuery<ParseObject> query = null;
-		
-		if(activityType.equals("Coffee"))
+	public final static void getActivityList(ConnectUser user, final FindCallback<ConnectActivity> callback, boolean self, String activityType){
+		ParseQuery<ConnectActivity> query = null;
+		if(activityType.equals(Constants.COFFEE)){
 			query = ParseQuery.getQuery("CoffeeActivity");
-		
-		List<String> activityIds = new ArrayList<String>();
-		
-		for (Assoc assoc : assocs) {
-			activityIds.add(assoc.getActivityId());
+			if (!self)
+				query.whereEqualTo("for", user);
+			else
+				query.whereEqualTo("user", user);
+			
+			query.findInBackground(callback);
+		  
 		}
-		
-		query.whereContainedIn("activityId", activityIds);
-		query.findInBackground(callback);
-		
-		
-		
 	}
-	
-	public final static void getActivityList(ParseUser user, final FindCallback<ParseObject> callback, final String activityType){
-		final List<Assoc> assocs = new ArrayList<Assoc>();
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Assoc");
-		query.whereEqualTo("friendId", user.getObjectId());
-		query.whereEqualTo("activityType", activityType);
-		
-		query.findInBackground(new FindCallback<ParseObject>() {
-			    public void done(List<ParseObject> aList, ParseException e) {
-			    	
-			        if (e == null) {
-			            Log.d("Assocs List", "Retrieved " + aList.size());
-			            for (ParseObject parseObject : aList) {
-							Assoc assoc = (Assoc) parseObject;
-							assocs.add(assoc);
-							
-						}
-			            getActivityList(assocs, callback, activityType);
-			        } else {
-			            Log.d("Assocs List", "Error: " + e.getMessage());
-			        }
-			    }
-			});
-		
-		
-		
-		
-		
-	}
-	
-
 }
