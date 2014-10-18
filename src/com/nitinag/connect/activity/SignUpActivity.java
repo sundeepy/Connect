@@ -26,6 +26,8 @@ public class SignUpActivity extends Activity {
   private EditText usernameEditText;
   private EditText passwordEditText;
   private EditText passwordAgainEditText;
+  private EditText etFirstNameText;
+  private EditText etLastNameText;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +37,11 @@ public class SignUpActivity extends Activity {
 
     // Set up the signup form.
     usernameEditText = (EditText) findViewById(R.id.username_edit_text);
-
     passwordEditText = (EditText) findViewById(R.id.password_edit_text);
     passwordAgainEditText = (EditText) findViewById(R.id.password_again_edit_text);
+    etFirstNameText = (EditText) findViewById(R.id.fname_edit_text);
+    etLastNameText = (EditText) findViewById(R.id.lname_edit_text);
+    
     passwordAgainEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
       @Override
       public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -63,7 +67,9 @@ public class SignUpActivity extends Activity {
     String username = usernameEditText.getText().toString().trim();
     String password = passwordEditText.getText().toString().trim();
     String passwordAgain = passwordAgainEditText.getText().toString().trim();
-
+    final String fname = etFirstNameText.getText().toString().trim();
+    final String lname = etLastNameText.getText().toString().trim();
+    
     // Validate the sign up data
     boolean validationError = false;
     StringBuilder validationErrorMessage = new StringBuilder(getString(R.string.error_intro));
@@ -105,6 +111,7 @@ public class SignUpActivity extends Activity {
     user.setPassword(password);
     
     
+    
 
     // Call the Parse signup method
     user.signUpInBackground(new SignUpCallback() {
@@ -118,6 +125,8 @@ public class SignUpActivity extends Activity {
           //Create a corresponding connect user as well
           ConnectUser connectUser = new ConnectUser();
           connectUser.setUserId(user.getObjectId());
+          connectUser.setFirstName(fname);
+          connectUser.setLastName(lname);
           connectUser.saveInBackground();
             
         	

@@ -42,6 +42,24 @@
                 android:imeActionId="@+id/edittext_action_signup"
                 android:imeActionLabel="@string/signup"
                 android:imeOptions="actionUnspecified" />
+            
+            <EditText
+                android:id="@+id/fname_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_fname"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/lname_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_lname"
+                android:maxLines="1"
+                android:singleLine="true" />
+            
+            
 
             <Button
                 android:id="@+id/action_button"

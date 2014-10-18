@@ -93,12 +93,12 @@ public class LoginActivity extends Activity {
       @Override
       public void done(ParseUser user, ParseException e) {
     	//Create mock user
-    	  
+    	/*  
       	try {
 			ActivityUtil.addMockFriends();
 		} catch (ParseException pe) {
 			Log.e("LoginActivity", "Unable to create mock users", pe);
-		}
+		}*/
 		
         dialog.dismiss();
         if (e != null) {

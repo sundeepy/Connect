@@ -24,9 +24,6 @@ public class ActivityUtil {
 	
 	private static final String TAG = "ActivityUtil";
 	private static ConnectUser currUser = null;
-	private static final Map<String, ConnectActivity> activityMap = new HashMap<String, ConnectActivity>();
-	
-	
 	public final static void addActivity(ConnectActivity c, SaveCallback callback){
 		c.saveInBackground(callback);
 	}
@@ -50,24 +47,13 @@ public class ActivityUtil {
 	
 	public final static void addMockFriends() throws ParseException{
 		ConnectUser me = getCurrentUser();
-		SaveCallback callback = new SaveCallback() {
-			
-			@Override
-			public void done(ParseException e) {
-				if(e == null){
-					Log.d(TAG, "User created successfully");
-				}
-				else {
-					Log.e(TAG, "Error creating other individual user", e);
-				}
-				
-			}
-		};
+		
 		
 		List<ParseUser> friends = new ArrayList<ParseUser>();
 		ParseUser nitin = new ParseUser();
 		nitin.setUsername("nitin");
 		nitin.setPassword("password");
+		
 		
 		
 		
@@ -100,6 +86,8 @@ public class ActivityUtil {
 				parseUser.signUp();
 				ConnectUser newUser = new ConnectUser();
 				newUser.setUserId(parseUser.getObjectId());
+				newUser.setFirstName("John");
+				newUser.setLastName("Smith");
 				newUser.save();
 				newUser.addFriend(me, new SaveCallback() {
 					
@@ -144,14 +132,14 @@ public class ActivityUtil {
 	}
 	
 	
-	public final static boolean activityExists(final ConnectUser user) throws ParseException{
-		ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("CoffeeActivity");
+	public final static boolean activityExists(final ConnectUser user, Class<ConnectActivity> activity) throws ParseException{
+		ParseQuery<ConnectActivity> userQuery = ParseQuery.getQuery(activity);
 		userQuery.whereEqualTo("user", user);
-		List<ParseObject> aList = userQuery.find();
+		List<ConnectActivity> aList = userQuery.find();
 		if(aList.size() > 0)
-			return false;
-		else
 			return true;
+		else
+			return false;
 	}
 	
 	public final static void saveActivity(final ConnectUser user, final ConnectActivity activity, final SaveCallback callback){
@@ -184,6 +172,21 @@ public class ActivityUtil {
 		ParseQuery<ConnectActivity> query = null;
 		if(activityType.equals(Constants.COFFEE)){
 			query = ParseQuery.getQuery("CoffeeActivity");
+		}
+		else if (activityType.equals(Constants.LUNCH)){
+			query = ParseQuery.getQuery("LunchActivity");
+		}
+		else if (activityType.equals(Constants.RIDE)){
+			query = ParseQuery.getQuery("RideActivity");
+		}
+		else if (activityType.equals(Constants.DINNER)){
+			query = ParseQuery.getQuery("DinnerActivity");
+		}
+		
+		else 
+			return;
+		
+		
 			if (!self)
 				query.whereEqualTo("for", user);
 			else
@@ -191,6 +194,6 @@ public class ActivityUtil {
 			
 			query.findInBackground(callback);
 		  
-		}
+		
 	}
 }

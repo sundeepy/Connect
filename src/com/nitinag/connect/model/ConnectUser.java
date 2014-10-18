@@ -22,6 +22,22 @@ public class ConnectUser extends ParseObject{
 		put("userId", userId);
 	}
 	
+	public String getFirstName(){
+		return getString("fname");
+	}
+	
+	public String getLastName(){
+		return getString("lname");
+	}
+	
+	public void setFirstName(String fname){
+		put("fname", fname);
+	}
+	
+	public void setLastName(String lname){
+		put("lname", lname);
+	}
+	
 	public void addFriend(ConnectUser friend, SaveCallback callback){
 		ParseRelation<ConnectUser> relation = getRelation("friends");
 		relation.add(friend);

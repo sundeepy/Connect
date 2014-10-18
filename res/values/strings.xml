@@ -34,4 +34,9 @@
     <string name="ptr_last_updated">Updated: %1$s</string>
     <string name="title_activity_dashboard">DashboardActivity</string>
 	<string name="action_signout">Sign Out</string>
+	<string name="activity_message">TODO</string>
+	<string name="create_activity">Create</string>
+	<string name="cancel">Cancel</string>
+	<string name="prompt_fname">First Name</string>
+	<string name="prompt_lname">Last Name</string>
 </resources>

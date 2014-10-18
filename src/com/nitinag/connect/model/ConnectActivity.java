@@ -49,6 +49,14 @@ public abstract class ConnectActivity extends ParseObject{
 		put("expired", true);
 	}
 	
+	public String getMessage(){
+		return getString("message");
+	}
+	
+	public void setMessage(String message){
+		put("message", message);
+	}
+	
 	public abstract String getType();
 	public static ParseQuery<ConnectActivity> getQuery(){
 		ParseQuery<ConnectActivity> query = ParseQuery.getQuery(ConnectActivity.class);
