@@ -16,6 +16,8 @@ import com.parse.SaveCallback;
 
 @ParseClassName("ConnectActivity")
 public abstract class ConnectActivity extends ParseObject{
+	
+	
 
 	public ConnectUser getUser() {
 		return (ConnectUser) get("user");
@@ -45,8 +47,8 @@ public abstract class ConnectActivity extends ParseObject{
 		return getBoolean("expired");
 	}
 	
-	public void expired(){
-		put("expired", true);
+	public void expired(boolean e){
+		put("expired", e);
 	}
 	
 	public String getMessage(){

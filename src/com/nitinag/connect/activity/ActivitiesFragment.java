@@ -153,7 +153,7 @@ public class ActivitiesFragment extends Fragment implements PopulateView{
 				
 				if(connectActivity.getType().equals(Constants.COFFEE))
 					ivProfileImage.setImageDrawable(
-							getResources().getDrawable(R.drawable.ic_coffee)
+							getResources().getDrawable(R.drawable.bb)
 						);
 				else if(connectActivity.getType().equals(Constants.RIDE))
 					ivProfileImage.setImageDrawable(

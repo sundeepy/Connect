@@ -135,6 +135,7 @@ public class ActivityUtil {
 	public final static boolean activityExists(final ConnectUser user, Class<ConnectActivity> activity) throws ParseException{
 		ParseQuery<ConnectActivity> userQuery = ParseQuery.getQuery(activity);
 		userQuery.whereEqualTo("user", user);
+		//userQuery.whereEqualTo("expired", false);
 		List<ConnectActivity> aList = userQuery.find();
 		if(aList.size() > 0)
 			return true;
