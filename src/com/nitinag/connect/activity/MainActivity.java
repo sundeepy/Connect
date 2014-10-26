@@ -132,6 +132,7 @@ public class MainActivity extends FragmentActivity implements ActivityDialogList
 		ConnectActivity newActivity = null;
 		if(activityType.equals(Constants.COFFEE)){
 			newActivity = new CoffeeActivity();
+			
 		}
 		else if(activityType.equals(Constants.RIDE)){
 			newActivity = new RideActivity();
@@ -145,6 +146,7 @@ public class MainActivity extends FragmentActivity implements ActivityDialogList
 		else 
 			return;
 		
+		newActivity.expired(false);
 		newActivity.setMessage(tvActivityMessage.getText().toString());
 		addActivity(newActivity);
 	}

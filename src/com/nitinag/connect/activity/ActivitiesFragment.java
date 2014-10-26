@@ -1,9 +1,12 @@
 package com.nitinag.connect.activity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nitinag.connect.model.CoffeeActivity;
 import com.nitinag.connect.model.ConnectActivity;
 import com.nitinag.connect.model.ConnectUser;
 import com.nitinag.connect.utils.ActivityArrayAdapter;
@@ -23,11 +25,11 @@ import com.nitinag.connect.utils.ActivityUtil;
 import com.nitinag.connect.utils.Constants;
 import com.nitinag.connect.utils.EndlessScrollListener;
 import com.nitinag.connect.utils.PopulateView;
+import com.nitinag.connect.utils.UpdateActivityThread;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import eu.erikw.PullToRefreshListView;
 import eu.erikw.PullToRefreshListView.OnRefreshListener;
@@ -35,10 +37,13 @@ import eu.erikw.PullToRefreshListView.OnRefreshListener;
 public class ActivitiesFragment extends Fragment implements PopulateView{
 	protected static final String TAG = "ActivitiesFragment";
 	private ArrayList<ConnectActivity> activities;
+	private Map<ConnectActivity, View> progressMap;
 	protected ArrayAdapter<ConnectActivity> aActivities;
 	protected PullToRefreshListView lvActivities;
+	private Handler mHandler = new Handler();
 	private String activityType;
 	private boolean self;
+	protected UpdateActivityThread updateProgress;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,9 +51,11 @@ public class ActivitiesFragment extends Fragment implements PopulateView{
 		
 		activities = new ArrayList<ConnectActivity>();
 		aActivities = new ActivityArrayAdapter(getActivity(), this, activities);
+		progressMap = new HashMap<ConnectActivity, View>();
 		Bundle args = getArguments();
 		self = args.getBoolean("self");
 		activityType = args.getString("activityType");
+		updateProgress = new UpdateActivityThread(mHandler, progressMap);
 	}
 
 	
@@ -65,12 +72,16 @@ public class ActivitiesFragment extends Fragment implements PopulateView{
                 // Your code to refresh the list here.
                 // Make sure you call listView.onRefreshComplete() when
                 // once the network request has completed successfully.
+            	updateProgress.suspend();
             	aActivities.clear();
+            	progressMap.clear();
+            	
             	try {
 					populateActivities();
 				} catch (ParseException e) {
 					Log.e(TAG, "Unable to populate activities", e);
 				}
+            	
             	
             }
         });
@@ -100,8 +111,10 @@ public class ActivitiesFragment extends Fragment implements PopulateView{
 		
 		
 		try {
-			aActivities.clear();
+			aActivities.clear();	
+			progressMap.clear();
 			populateActivities();
+			new Thread(updateProgress).start();
 		} catch (ParseException e) {
 			Log.e(TAG, "Unable to populate activities", e);
 		}
@@ -121,6 +134,9 @@ public class ActivitiesFragment extends Fragment implements PopulateView{
 					}
 					aActivities.notifyDataSetChanged();
 					lvActivities.onRefreshComplete();
+					//if(!updateProgress.isStarted())
+					//	new Thread(updateProgress).start();
+					updateProgress.resume();
 			    }
 				else {
 					Log.e(TAG, "Unable to retrieve friend activity list", pe);
@@ -142,6 +158,10 @@ public class ActivitiesFragment extends Fragment implements PopulateView{
 		final TextView tvUserName = (TextView) v.findViewById(R.id.tvUserName);
 		final TextView tvActivityBody = (TextView) v.findViewById(R.id.tvActivityBody);
 		final TextView createdAt = (TextView) v.findViewById(R.id.created_at);
+		final TextView tvProgress = (TextView) v.findViewById(R.id.tvRemaining);
+		progressMap.put(connectActivity, tvProgress);
+		
+		
 		ivProfileImage.setImageResource(android.R.color.transparent);
 		
 		final ConnectUser createdBy = connectActivity.getUser();
@@ -170,6 +190,7 @@ public class ActivitiesFragment extends Fragment implements PopulateView{
 				
 				tvActivityBody.setText(connectActivity.getMessage());
 				createdAt.setText(connectActivity.getRelativeTimeAgo());
+				
 				
 			}
 			

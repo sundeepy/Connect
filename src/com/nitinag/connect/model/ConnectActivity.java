@@ -2,6 +2,7 @@ package com.nitinag.connect.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,11 +17,21 @@ import com.parse.SaveCallback;
 
 @ParseClassName("ConnectActivity")
 public abstract class ConnectActivity extends ParseObject{
-	
+	static final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
 	
 
 	public ConnectUser getUser() {
 		return (ConnectUser) get("user");
+	}
+	
+	@Override
+	public int hashCode() {
+		return getObjectId().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return getObjectId().equals(o);
 	}
 	
 	public void setFor(List<ConnectUser> users, SaveCallback callback){
@@ -83,8 +94,17 @@ public abstract class ConnectActivity extends ParseObject{
 		return relativeDate;
 	}
 	
+	public Date getExpiration(){
+		return getDate("expiration");
+	}
 	
+	public void setExpiration(Date d){
+		put("expiration", d);
+	}
 	
+	public Date getDefaultExpiration(){
+		return new Date(getCreatedAt().getTime() + (30 * ONE_MINUTE_IN_MILLIS));
+	}
 	
 	/**
 	 * @param args
