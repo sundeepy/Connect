@@ -29,6 +29,10 @@ public class ActivityUtil {
 	}
 	
 	
+	public final static void setCurrentUser(ConnectUser user) {
+		currUser = user;
+	}
+	
 	public final static ConnectUser getCurrentUser() throws ParseException{
 		if (currUser == null){
 			ParseUser me = ParseUser.getCurrentUser();
@@ -81,13 +85,13 @@ public class ActivityUtil {
 		friends.add(sandeep);
 		
 		try {
-			
+			int pIndex = 0;
 			for (ParseUser parseUser : friends) {
 				parseUser.signUp();
 				ConnectUser newUser = new ConnectUser();
 				newUser.setUserId(parseUser.getObjectId());
-				newUser.setFirstName("John");
-				newUser.setLastName("Smith");
+				newUser.setFirstName("John" + pIndex);
+				newUser.setLastName("Smith" + pIndex++);
 				newUser.save();
 				newUser.addFriend(me, new SaveCallback() {
 					

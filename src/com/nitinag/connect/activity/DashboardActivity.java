@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.nitinag.connect.utils.ActivityUtil;
 import com.nitinag.connect.utils.FragmentTabListener;
 import com.parse.ParseUser;
 
@@ -72,6 +73,7 @@ public class DashboardActivity extends FragmentActivity{
 	
 	public void onSignOut(MenuItem item){
 		ParseUser.logOut();
+		ActivityUtil.setCurrentUser(null);
 		Intent intent = new Intent(this, LoginActivity.class);
 		startActivity(intent);
 		this.finish();

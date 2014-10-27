@@ -3,6 +3,8 @@ package com.nitinag.connect.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.R;
+import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -66,7 +68,12 @@ public class UpdateActivityThread implements Runnable{
                 	for(View v : remainMap.keySet()){
                 		
                 		TextView tv = (TextView)v;
-                		tv.setText(remainMap.get(v));
+                		String currentState = remainMap.get(v);
+                		if("Expired".equals(currentState))
+                			tv.setTextColor(Color.RED);
+                		else
+                			tv.setTextColor(Color.GREEN);
+                		tv.setText(currentState);
                 		tv.invalidate();
                 	}
                 }
